@@ -27,7 +27,7 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "kubernetes-kops-cluster"
+    bucket = "terraform-sync"
     key    = "terraform.tfstate"
     region = "eu-west-2"
   }
