@@ -27,7 +27,7 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "kubernetes-kops-cluster"
+    bucket = "111-aditya-bucket"
     key    = "terraform.tfstate"
     region = "eu-west-2"
   }
