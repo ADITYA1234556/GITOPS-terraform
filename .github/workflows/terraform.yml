@@ -6,6 +6,7 @@ on:
       - stage
     paths:
       - terraform/**
+      - #any folder or subfolder inside terraform/
   pull_request:
     branches:
       - main
@@ -17,7 +18,7 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
   BUCKET_TF_STATE: ${{secrets.BUCKET_TF_STATE}}
   AWS_REGION: eu-west-2
-  EKS_CLUSTER: gitops-eks
+  EKS_CLUSTER: aditya-eks
 
 jobs:
     terraform:
@@ -38,7 +39,7 @@ jobs:
           #  terraform_version: 1.6.3
 
         - name: Terraform init
-          id: init
+          id: init #id can be any name it will used to build dependencies
           run: terraform init -backend-config="bucket=$BUCKET_TF_STATE"
         
         - name: Terraform format
@@ -52,14 +53,14 @@ jobs:
         - name: Terraform plan
           id: plan
           run: terraform plan -no-color -input=false -out planfile
-          continue-on-error: true
+          continue-on-error: true #we will specify specific place when the code should fail
 
         - name: Terraform plan status
           if: steps.plan.outcome == 'failure'
           run: exit 1
         
         - name: Terraform apply the code
-          id: apply
+          id: apply #apply only if there is a push event in main branch
           if: github.ref == 'refs/heads/main' && github.event_name == 'push'
           run: terraform apply -auto-approve -input=false -parallelism=1 planfile
 
